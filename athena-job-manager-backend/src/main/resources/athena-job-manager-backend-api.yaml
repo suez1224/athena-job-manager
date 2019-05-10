@@ -1,0 +1,156 @@
+################################################################################
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+# limitations under the License.
+################################################################################
+
+swagger: '2.0'
+info:
+  description: Athena Job Manager REST API
+  version: '0.0.1'
+  title: Athena Job Manager REST API
+  contact:
+    email: athena-dev@uber.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+basePath: /ws/v1
+tags:
+  - name: jobs
+    description: Operations on applications
+paths:
+  /jobs:
+    get:
+      tags:
+        - jobs
+      operationId: listJob
+      summary: List all jobs
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobDefinition'
+  /jobs/deploy:
+    post:
+      tags:
+        - jobs
+      operationId: deployJob
+      summary: Obtain a new UUID for a job for deployment
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              job-uuid:
+                type: string
+                description: The allocated job UUID
+  '/jobs/{jobUUID}':
+    get:
+      tags:
+        - jobs
+      operationId: getJob
+      summary: Get the detail information about a job
+      parameters:
+        - name: jobUUID
+          in: path
+          required: true
+          description: UUID of the job
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/JobDefinition'
+    delete:
+      tags:
+        - jobs
+      operationId: terminateJob
+      summary: Terminate a job.
+      parameters:
+        - name: jobUUID
+          in: path
+          required: true
+          description: UUID of the job
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful operation
+definitions:
+  JobDefinition:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        description: the job uuid
+      outputs:
+        type: array
+        items:
+          type: string
+        description: The tables where the outputs will be pushed to. The values can be customized
+      tag:
+        type: object
+        description: 'customized information about the job (e.g., name)'
+      desired-state:
+        type: array
+        items:
+          type: object
+          properties:
+            clusterId:
+              type: string
+              description: The cluster to be submitted to
+            resource:
+              type: object
+              description: The resources the application master requires
+              properties:
+                queue:
+                  type: string
+                  description: The name of the queue to which the application should be submitted
+                memory:
+                  type: integer
+                  format: int64
+                  description: Memory required for each container
+                vCores:
+                  type: integer
+                  format: int64
+                  description: Virtual cores for each container
+                executionSlots:
+                  type: integer
+                  format: int64
+                  description: Execution slots per virtual cores for each container
+  InstanceState:
+    type: object
+    properties:
+      state:
+        type: string
+        description: State of the application
+        enum:
+          - NEW
+          - NEW_SAVING
+          - SUBMITTED
+          - ACCEPTED
+          - RUNNING
+          - FINISHED
+          - FAILED
+          - KILLED

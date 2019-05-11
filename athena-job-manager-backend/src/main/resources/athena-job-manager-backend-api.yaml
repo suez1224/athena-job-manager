@@ -27,6 +27,7 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 basePath: /ws/v1
+host: localhost
 tags:
   - name: jobs
     description: Operations on applications.

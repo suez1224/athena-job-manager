@@ -24,5 +24,6 @@ under the License.
 
 <suppressions>
   <suppress checks=".*" files="[/\\]generated-sources[/\\]" />
+  <suppress checks=".*" files="[\//]target[\//]swagger[\//]src[\//]gen[\//]java[\//]" />
   <suppress checks="JavadocPackage|MagicNumber" files="[/\\]src[/\\]test[/\\]" />
 </suppressions>

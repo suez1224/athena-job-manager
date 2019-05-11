@@ -83,7 +83,7 @@ under the License.
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/athena-job-manager-backend-api.yaml</inputSpec>
                             <language>jaxrs</language>
-                            <output>target/generated-sources/swagger</output>
+                            <output>target/swagger</output>
                             <modelPackage>com.uber.athena.manager.backend.api</modelPackage>
                             <apiPackage>com.uber.athena.manager.backend.api</apiPackage>
                             <invokerPackage>com.uber.athena.manager.backend.api</invokerPackage>
@@ -110,7 +110,7 @@ under the License.
                         </goals>
                         <configuration>
                             <sources>
-                                <source>target/generated-sources/swagger/src/gen/java</source>
+                                <source>target/swagger/src/gen/java</source>
                             </sources>
                         </configuration>
                     </execution>

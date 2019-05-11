@@ -29,14 +29,22 @@ info:
 basePath: /ws/v1
 tags:
   - name: jobs
-    description: Operations on applications
+    description: Operations on applications.
+  - name: resources
+    description: Operations on resources like Jars, static configs, checkpoints, etc.
 paths:
-  /jobs:
+  '/jobs':
     get:
       tags:
         - jobs
       operationId: listJob
       summary: List all jobs
+      parameters:
+        - name: serviceName
+          in: path
+          required: true
+          description: Name of the service requesting its managed list of jobs.
+          type: string
       produces:
         - application/json
       responses:
@@ -46,12 +54,12 @@ paths:
             type: array
             items:
               $ref: '#/definitions/JobDefinition'
-  /jobs/deploy:
+  '/jobs/deploy':
     post:
       tags:
         - jobs
       operationId: deployJob
-      summary: Obtain a new UUID for a job for deployment
+      summary: Obtain a new deployment UUID, and set the job for deployment
       produces:
         - application/json
       responses:
@@ -85,7 +93,7 @@ paths:
       tags:
         - jobs
       operationId: terminateJob
-      summary: Terminate a job.
+      summary: Terminate a sepcific deployment of a job.
       parameters:
         - name: jobUUID
           in: path
@@ -96,6 +104,45 @@ paths:
       responses:
         '200':
           description: successful operation
+  '/resources':
+    get:
+      tags:
+      - resources
+      operationId: listResources
+      summary: List all resources associated with a specific job deployment
+      parameters:
+      - name: jobUUID
+        in: path
+        required: true
+        description: UUID of the job.
+        type: string
+        format: uuid
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResourceDefinition'
+    post:
+      tags:
+      - resources
+      operationId: createResource
+      summary: Create/Deploy a resource and returns a resource UUID
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              resource-uuid:
+                type: string
+                description: The allocated resource UUID
+
 definitions:
   JobDefinition:
     type: object
@@ -104,47 +151,45 @@ definitions:
         type: string
         format: uuid
         description: the job uuid
-      outputs:
-        type: array
-        items:
-          type: string
-        description: The tables where the outputs will be pushed to. The values can be customized
+      job-type:
+        schema:
+          $ref: '#/definitions/JobType'
+      metadata:
+        type: object
+        properties:
+          service-name:
+            type: string
+            desription: the service name associate with the job
       tag:
         type: object
         description: 'customized information about the job (e.g., name)'
-      desired-state:
-        type: array
-        items:
-          type: object
-          properties:
-            clusterId:
-              type: string
-              description: The cluster to be submitted to
-            resource:
-              type: object
-              description: The resources the application master requires
-              properties:
-                queue:
-                  type: string
-                  description: The name of the queue to which the application should be submitted
-                memory:
-                  type: integer
-                  format: int64
-                  description: Memory required for each container
-                vCores:
-                  type: integer
-                  format: int64
-                  description: Virtual cores for each container
-                executionSlots:
-                  type: integer
-                  format: int64
-                  description: Execution slots per virtual cores for each container
-  InstanceState:
+  ResourceDefinition:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        descrdiption: the resource uuid
+  ResourceType:
+    type: string
+    enum:
+      - CHECKPOINT
+      - JAR
+      - CONFIG
+      - OTHER
+  JobType:
+    type: string
+    enum:
+      - ATHENA_FAAS
+      - ATHENA_SQL
+      - ATHENA_FLUX
+      - OTHER
+  JobStatus:
     type: object
     properties:
       state:
         type: string
-        description: State of the application
+        description: Status of the application
         enum:
           - NEW
           - NEW_SAVING

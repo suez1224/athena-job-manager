@@ -104,7 +104,7 @@ under the License.
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/athena-job-manager-backend-api.yaml</inputSpec>
-                            <language>html</language>
+                            <language>html2</language>
                             <output>target/swagger-doc</output>
                             <ignoreFileOverride>${project.basedir}/src/main/resources/.swagger-codegen-ignore</ignoreFileOverride>
                         </configuration>

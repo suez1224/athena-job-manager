@@ -60,18 +60,14 @@ paths:
       tags:
         - jobs
       operationId: deployJob
-      summary: Obtain a new deployment UUID, and set the job for deployment
+      summary: Obtain a new deployment UUID, and set the job desire state to RUNNING to trigger deployment.
       produces:
         - application/json
       responses:
         '200':
           description: successful operation
           schema:
-            type: object
-            properties:
-              job-uuid:
-                type: string
-                description: The allocated job UUID
+            $ref: '#/definitions/DeploymentDefinition'
   '/jobs/{jobUUID}':
     get:
       tags:
@@ -94,7 +90,7 @@ paths:
       tags:
         - jobs
       operationId: terminateJob
-      summary: Terminate a sepcific deployment of a job.
+      summary: Terminate a running deployment of a job by setting desire state to CANCELLED.
       parameters:
         - name: jobUUID
           in: path
@@ -155,15 +151,36 @@ definitions:
       job-type:
         schema:
           $ref: '#/definitions/JobType'
+      desire-state:
+        schema:
+          $ref: '#/definitions/JobState'
       metadata:
         type: object
+        description: metadata properties for the job.
         properties:
           service-name:
             type: string
             desription: the service name associate with the job
-      tag:
+      payload:
         type: object
-        description: 'customized information about the job (e.g., name)'
+        description: payload of the job itself that formats based on the job type.
+  DeploymentDefinition:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+        description: the deployment uuid
+      job-uuid:
+        type: string
+        format: uuid
+        description: the deployment uuid
+      deployment-status:
+        schema:
+          $ref: '#/definitions/DeploymentStatus'
+      payload:
+        type: object
+        description: payload of the deployment returned by a deployment manager.
   ResourceDefinition:
     type: object
     properties:
@@ -171,11 +188,18 @@ definitions:
         type: string
         format: uuid
         descrdiption: the resource uuid
+      resource-type:
+        schema:
+          $ref: '#/definitions/ResourceType'
+      payload:
+        type: object
+        description: payload of the resource itself that formats based on the resource type.
   ResourceType:
     type: string
     enum:
       - CHECKPOINT
-      - JAR
+      - SAVEPOINT
+      - PACKAGE
       - CONFIG
       - OTHER
   JobType:
@@ -185,12 +209,22 @@ definitions:
       - ATHENA_SQL
       - ATHENA_FLUX
       - OTHER
-  JobStatus:
+  JobState:
     type: object
     properties:
       state:
         type: string
-        description: Status of the application
+        description: Desire state of a specific job.
+        enum:
+        - RUNNING
+        - CANCELLED
+        - SUSPENDED
+  DeploymentStatus:
+    type: object
+    properties:
+      state:
+        type: string
+        description: Status of the application deployed in a region/cluster.
         enum:
           - NEW
           - NEW_SAVING
@@ -200,3 +234,4 @@ definitions:
           - FINISHED
           - FAILED
           - KILLED
+

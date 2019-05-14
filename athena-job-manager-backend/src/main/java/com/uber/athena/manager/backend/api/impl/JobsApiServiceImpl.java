@@ -32,7 +32,7 @@ import java.util.UUID;
 public class JobsApiServiceImpl extends JobsApiService {
 
   @Override
-  public Response deployJob(SecurityContext securityContext)
+  public Response alterJob(UUID jobUUID, SecurityContext securityContext)
       throws NotFoundException {
     // do some magic!
     return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

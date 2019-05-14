@@ -60,13 +60,13 @@ paths:
       - jobs
     operationId: createJob
     summary: Create a specific job definition
-    requestBody:
-      description: the job definition
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/definitions/JobDefinition'
+    parameters:
+      - name: jobDefinition
+        in: body
+        required: true
+        description: the job definition.
+        schema:
+          $ref: '#/definitions/JobDefinition'
     produces:
       - application/json
     responses:
@@ -101,20 +101,19 @@ paths:
       - jobs
       operationId: alterJob
       summary: Alter the state of a specific job.
-      requestBody:
-        description: the desired job state for the job.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/JobState'
       parameters:
-      - name: jobUUID
-        in: path
-        required: true
-        description: UUID of the job
-        type: string
-        format: uuid
+        - name: jobUUID
+          in: path
+          required: true
+          description: UUID of the job
+          type: string
+          format: uuid
+        - name: jobState
+          in: body
+          required: true
+          description: the desired job state for the job.
+          schema:
+            $ref: '#/definitions/JobState'
       produces:
         - application/json
       responses:
@@ -164,13 +163,13 @@ paths:
       - resources
       operationId: createResource
       summary: Create/Deploy a resource and returns a resource UUID
-      requestBody:
-        description: the resource required to be created.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/ResourceDefinition'
+      parameters:
+        - name: resourceDefinition
+          in: body
+          required: true
+          description: the resource required to be created.
+          schema:
+            $ref: '#/definitions/ResourceDefinition'
       produces:
         - application/json
       responses:

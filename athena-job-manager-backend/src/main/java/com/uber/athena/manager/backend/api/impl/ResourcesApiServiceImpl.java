@@ -20,6 +20,7 @@ package com.uber.athena.manager.backend.api.impl;
 
 import com.uber.athena.manager.backend.api.ApiResponseMessage;
 import com.uber.athena.manager.backend.api.NotFoundException;
+import com.uber.athena.manager.backend.api.ResourceDefinition;
 import com.uber.athena.manager.backend.api.ResourcesApiService;
 
 import javax.ws.rs.core.Response;
@@ -32,7 +33,7 @@ import java.util.UUID;
 public class ResourcesApiServiceImpl extends ResourcesApiService {
 
   @Override
-  public Response createResource(SecurityContext securityContext)
+  public Response createResource(ResourceDefinition resourceDefinition, SecurityContext securityContext)
       throws NotFoundException {
     // do some magic!
     return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

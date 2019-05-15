@@ -55,19 +55,29 @@ paths:
             type: array
             items:
               $ref: '#/definitions/JobDefinition'
-  '/jobs/deploy':
-    post:
-      tags:
-        - jobs
-      operationId: deployJob
-      summary: Obtain a new deployment UUID, and set the job desire state to RUNNING to trigger deployment.
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: '#/definitions/DeploymentDefinition'
+  post:
+    tags:
+      - jobs
+    operationId: createJob
+    summary: Create a specific job definition
+    parameters:
+      - name: jobDefinition
+        in: body
+        required: true
+        description: the job definition.
+        schema:
+          $ref: '#/definitions/JobDefinition'
+    produces:
+      - application/json
+    responses:
+      '200':
+        description: successful operation
+        schema:
+          type: object
+          properties:
+            job-uuid:
+              type: string
+              description: The allocated job UUID
   '/jobs/{jobUUID}':
     get:
       tags:
@@ -81,6 +91,31 @@ paths:
           description: UUID of the job
           type: string
           format: uuid
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/JobDefinition'
+    put:
+      tags:
+      - jobs
+      operationId: alterJob
+      summary: Alter the state of a specific job.
+      parameters:
+        - name: jobUUID
+          in: path
+          required: true
+          description: UUID of the job
+          type: string
+          format: uuid
+        - name: jobState
+          in: body
+          required: true
+          description: the desired job state for the job.
+          schema:
+            $ref: '#/definitions/JobState'
+      produces:
+        - application/json
       responses:
         '200':
           description: successful operation
@@ -128,8 +163,15 @@ paths:
       - resources
       operationId: createResource
       summary: Create/Deploy a resource and returns a resource UUID
+      parameters:
+        - name: resourceDefinition
+          in: body
+          required: true
+          description: the resource required to be created.
+          schema:
+            $ref: '#/definitions/ResourceDefinition'
       produces:
-      - application/json
+        - application/json
       responses:
         '200':
           description: successful operation
@@ -167,14 +209,14 @@ definitions:
   DeploymentDefinition:
     type: object
     properties:
-      uuid:
-        type: string
-        format: uuid
-        description: the deployment uuid
       job-uuid:
         type: string
         format: uuid
-        description: the deployment uuid
+        description: the uuid of the job that's getting deployed
+      deployment-uuid:
+        type: string
+        format: uuid
+        description: the deployment uuid represent a specific run of the application.
       deployment-status:
         schema:
           $ref: '#/definitions/DeploymentStatus'

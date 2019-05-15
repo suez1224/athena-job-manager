@@ -19,6 +19,7 @@
 package com.uber.athena.manager.backend.api.impl;
 
 import com.uber.athena.manager.backend.api.ApiResponseMessage;
+import com.uber.athena.manager.backend.api.JobState;
 import com.uber.athena.manager.backend.api.JobsApiService;
 import com.uber.athena.manager.backend.api.NotFoundException;
 
@@ -32,7 +33,7 @@ import java.util.UUID;
 public class JobsApiServiceImpl extends JobsApiService {
 
   @Override
-  public Response deployJob(SecurityContext securityContext)
+  public Response alterJob(UUID jobUUID, JobState jobState, SecurityContext securityContext)
       throws NotFoundException {
     // do some magic!
     return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
